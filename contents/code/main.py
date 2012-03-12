@@ -41,7 +41,7 @@ from config import *
 from util import *
 
 class CPUTemp(plasmascript.Applet):
-	def __init__(self,parent,args=None):
+	def __init__(self,parent, args=None):
 		plasmascript.Applet.__init__(self,parent)
 
 	def init(self):
@@ -62,7 +62,7 @@ class CPUTemp(plasmascript.Applet):
 		self.method = self.settings.get('method', 'lm-sensors')
 		self.overheat_level = int(self.settings.get('overheat_level', 80))
 		self.overheat_color = self.settings.get('overheat_color', '#f00')
-		self.units = self.settings.get('overheat_color', 'Celsius')
+		self.units = self.settings.get('units', 'Celsius')
 
 		# start timer
 		self.timer = QtCore.QTimer()
@@ -113,10 +113,6 @@ class CPUTemp(plasmascript.Applet):
 		self.settings.set('overheat_level', self.overheat_level)
 		self.settings.set('method', self.method)
 
-		if (self.units == 'Celsius'):
-			pass
-		else:
-			self.overheat_level = round(((9.0 / 5.0)) * self.overheat_level + 32.0)
 
 		# update timer
 		self.timer.setInterval(self.interval)
@@ -139,19 +135,10 @@ class CPUTemp(plasmascript.Applet):
 			except:
 				print 'Unable to use %s method.' % self.method
 
-		if (self.units == 'Celsius'):
-			sign = 'C';
-			pass
-		else:
-			t = (round((9.0 / 5.0)) * t + 32.0)
-			sign = 'F';
-			pass
-
-
 		if (t > self.overheat_level):
 			self.color = self.overheat_color
 			
-		self.label.setText('<font color="' + self.color + '"><b>' + str(t) + '&deg; ' + sign + '</b></font>')
+		self.label.setText('<font color="' + self.color + '"><b>' + str(t) + '&deg; C</b></font>')
 
 def CreateApplet(parent):
 	return CPUTemp(parent)

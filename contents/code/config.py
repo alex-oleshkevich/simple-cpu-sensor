@@ -30,7 +30,7 @@ from util import *
 class Config():
 	def __init__(self, applet):
 		self.applet = applet
-		self.config = self.applet.config()
+		self.config = self.applet.globalConfig()
 		
 	##
 	# Read option from configuration file
