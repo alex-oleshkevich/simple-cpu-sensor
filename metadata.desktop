@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Simple CPU Sensor
+Comment=Simple CPU Sensor
 Type=Service
-ServiceTypes=Plasma/Applet
+ServiceTypes=Plasma/Applet,Plasma/PopupApplet
 Icon=utilities-system-monitor
+
 X-Plasma-API=python
 X-Plasma-MainScript=code/main.py
 X-KDE-PluginInfo-Author=Alex Oleshkevich
@@ -12,6 +14,6 @@ X-KDE-PluginInfo-Name=simple-cpu-sensor
 X-KDE-PluginInfo-Version=0.2
 X-KDE-PluginInfo-Website=http://kde-look.org/
 X-KDE-PluginInfo-Category=System Information
-X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-Depends=plasma-scriptengine-python
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
