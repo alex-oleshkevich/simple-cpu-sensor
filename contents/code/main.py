@@ -78,12 +78,12 @@ class CPUTemp(plasmascript.Applet):
 		self.configpage = ConfigWindow(self, self.settings)
 
 		# prefill fields
-		self.configpage.ui.kcb_color.setColor(QColor(self.color))
-		self.configpage.ui.sb_interval.setValue(self.interval)
-		self.configpage.ui.cb_method.setCurrentIndex(self.configpage.ui.cb_method.findText(self.method))
-		self.configpage.ui.sb_overheat_level.setValue(self.overheat_level)
-		self.configpage.ui.kcb_overheat_color.setColor(QColor(self.overheat_color))
-		self.configpage.ui.cb_units.setCurrentIndex(self.configpage.ui.cb_units.findText(self.units))
+		self.configpage.ui.kcb_color.setColor(QColor(self.settings.get('color', '#ffffff')))
+		self.configpage.ui.sb_interval.setValue(int(self.settings.get('interval', 500)))
+		self.configpage.ui.cb_method.setCurrentIndex(self.configpage.ui.cb_method.findText(self.settings.get('method')))
+		self.configpage.ui.sb_overheat_level.setValue(int(self.settings.get('overheat_level', 80)))
+		self.configpage.ui.kcb_overheat_color.setColor(QColor(self.settings.get('overheat_color', '#ff0000')))
+		self.configpage.ui.cb_units.setCurrentIndex(self.configpage.ui.cb_units.findText(self.settings.get('units')))
 
 		# add config page
 		page = parent.addPage(self.configpage, i18n(self.name()))
@@ -137,6 +137,8 @@ class CPUTemp(plasmascript.Applet):
 
 		if (t > self.overheat_level):
 			self.color = self.overheat_color
+		else:
+			self.color = self.settings.get('color', self.color)
 			
 		self.label.setText('<font color="' + self.color + '"><b>' + str(t) + '&deg; C</b></font>')
 
