@@ -137,12 +137,17 @@
        <widget class="QComboBox" name="cb_method">
         <item>
          <property name="text">
-          <string>lm-sensors</string>
+          <string>sysfs</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>/proc/acpi</string>
+          <string>sensors</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>acpi</string>
          </property>
         </item>
        </widget>
