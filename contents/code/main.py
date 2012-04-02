@@ -57,11 +57,12 @@ class CPUTemp(plasmascript.Applet):
 		self.settings = Config(self)
 		self.color = self.settings.get('color', '#fff')
 		self.interval = int(self.settings.get('interval', 500))
-		self.method = self.settings.get('method', 'sysfs')
-
+		self.font_family = str(self.settings.get('font_family', 'Dejavu Sans'))
+		self.font_size = int(self.settings.get('font_size', 10))
+		self.font_weight = int(self.settings.get('font_weight', 10))
+		
 		self.overheat_level = int(self.settings.get('overheat_level', 80))
 		self.overheat_color = self.settings.get('overheat_color', '#f00')
-		self.units = self.settings.get('units', 'Celsius')
 
 		# start timer
 		self.timer = QtCore.QTimer()
@@ -71,7 +72,7 @@ class CPUTemp(plasmascript.Applet):
 
 	def startPolling(self):
 		try:
-			self.timer.start(1000)
+			self.timer.start()
 			QtCore.QObject.connect(self.timer, QtCore.SIGNAL("timeout()"), self.updateLabel)
 
 			# update temp label
@@ -86,11 +87,14 @@ class CPUTemp(plasmascript.Applet):
 	def createConfigurationInterface(self, parent):
 		self.configpage = ConfigWindow(self, self.settings)
 
+		font = QFont(str(self.settings.get('font_family', 'Dejavu Sans')), int(self.settings.get('font_size', 10)), int(int(self.settings.get('font_weight', 50))))
 		# prefill fields
 		self.configpage.ui.kcb_color.setColor(QColor(self.settings.get('color', '#ffffff')))
 		self.configpage.ui.sb_interval.setValue(int(self.settings.get('interval', 500)))
 		self.configpage.ui.sb_overheat_level.setValue(int(self.settings.get('overheat_level', 80)))
 		self.configpage.ui.kcb_overheat_color.setColor(QColor(self.settings.get('overheat_color', '#ff0000')))
+		self.configpage.ui.fontComboBox.setCurrentFont(font)
+		self.configpage.ui.spin_size.setValue(int(self.settings.get('font_size', 10)))
 
 		# add config page
 		page = parent.addPage(self.configpage, i18n(self.name()))
@@ -109,12 +113,17 @@ class CPUTemp(plasmascript.Applet):
 		self.interval = int(self.configpage.ui.sb_interval.value())
 		self.overheat_level = int(self.configpage.ui.sb_overheat_level.value())
 		self.overheat_color = str(self.configpage.ui.kcb_overheat_color.color().name())
-
+		self.font_family = str(self.configpage.ui.fontComboBox.currentFont().family())
+		self.font_size = int(self.configpage.ui.spin_size.value())
+		
 		# save config to settings
 		self.settings.set('color', self.color)
 		self.settings.set('interval', self.interval)
 		self.settings.set('overheat_color', self.overheat_color)
 		self.settings.set('overheat_level', self.overheat_level)
+		self.settings.set('font_size', self.font_size)
+		self.settings.set('font_family', self.font_family)
+		self.settings.set('font_weight', self.font_weight)
 
 		# update timer
 		self.timer.setInterval(self.interval)
@@ -131,8 +140,8 @@ class CPUTemp(plasmascript.Applet):
 		else:
 			self.color = self.settings.get('color', self.color)
 
-		self.label.setText('<font style="color:' + self.color + '"><b>' + str(t) + '&deg; C</b></font>')
-
+		text = '<font style="color:%s;font: %dpt \'%s\';"><b>%s&deg; C</b></font>' % (self.color, self.font_size, self.font_family, str(t))
+		self.label.setText(text)
 	def showTooltip(self, text):
 			# create and set tooltip
 			tooltip = Plasma.ToolTipContent()

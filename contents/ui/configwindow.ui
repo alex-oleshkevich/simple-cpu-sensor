@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>425</width>
-    <height>171</height>
+    <width>420</width>
+    <height>244</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_3">
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_8">
        <property name="text">
-        <string>Overheat level</string>
+        <string>Overheat color</string>
        </property>
       </widget>
      </item>
@@ -36,10 +36,20 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_5">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="toolTip">
+        <string>Default color</string>
+       </property>
        <property name="text">
-        <string>Interval</string>
+        <string>Color</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="font_label">
+       <property name="text">
+        <string>Font</string>
        </property>
       </widget>
      </item>
@@ -56,6 +66,13 @@
        </property>
        <property name="value">
         <number>80</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Interval</string>
        </property>
       </widget>
      </item>
@@ -77,23 +94,6 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_10">
-       <property name="toolTip">
-        <string>Default color</string>
-       </property>
-       <property name="text">
-        <string>Color</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>Overheat color</string>
-       </property>
-      </widget>
-     </item>
      <item row="3" column="2">
       <widget class="KColorButton" name="kcb_overheat_color">
        <property name="toolTip">
@@ -105,6 +105,30 @@
          <green>0</green>
          <blue>0</blue>
         </color>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Overheat level</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QFontComboBox" name="fontComboBox"/>
+     </item>
+     <item row="5" column="2">
+      <widget class="QSpinBox" name="spin_size">
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Font Size</string>
        </property>
       </widget>
      </item>
