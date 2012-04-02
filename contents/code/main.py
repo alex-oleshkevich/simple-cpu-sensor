@@ -31,8 +31,6 @@ from PyQt4 import QtCore
 
 import commands
 
-from adapter.manager import *
-
 # config tab
 from configwindow import *
 
@@ -44,10 +42,7 @@ from util import *
 class CPUTemp(plasmascript.Applet):
 	def __init__(self,parent, args=None):
 		plasmascript.Applet.__init__(self,parent)
-		self.adapter = AdapterManager()
-
-		self.availableAdapters = self.adapter.getAvailableAdapters()
-
+		
 	def init(self):
 		self._name = str(self.package().metadata().pluginName())
 		self.layout = QGraphicsLinearLayout(Qt.Horizontal, self.applet)
@@ -64,8 +59,6 @@ class CPUTemp(plasmascript.Applet):
 		self.interval = int(self.settings.get('interval', 500))
 		self.method = self.settings.get('method', 'sysfs')
 
-		print self.method
-		
 		self.overheat_level = int(self.settings.get('overheat_level', 80))
 		self.overheat_color = self.settings.get('overheat_color', '#f00')
 		self.units = self.settings.get('units', 'Celsius')
@@ -78,8 +71,6 @@ class CPUTemp(plasmascript.Applet):
 
 	def startPolling(self):
 		try:
-			self.adapter.setAdapter(self.method)
-
 			self.timer.start(1000)
 			QtCore.QObject.connect(self.timer, QtCore.SIGNAL("timeout()"), self.updateLabel)
 
@@ -98,10 +89,8 @@ class CPUTemp(plasmascript.Applet):
 		# prefill fields
 		self.configpage.ui.kcb_color.setColor(QColor(self.settings.get('color', '#ffffff')))
 		self.configpage.ui.sb_interval.setValue(int(self.settings.get('interval', 500)))
-		self.configpage.ui.cb_method.setCurrentIndex(self.configpage.ui.cb_method.findText(self.settings.get('method')))
 		self.configpage.ui.sb_overheat_level.setValue(int(self.settings.get('overheat_level', 80)))
 		self.configpage.ui.kcb_overheat_color.setColor(QColor(self.settings.get('overheat_color', '#ff0000')))
-		self.configpage.ui.cb_units.setCurrentIndex(self.configpage.ui.cb_units.findText(self.settings.get('units')))
 
 		# add config page
 		page = parent.addPage(self.configpage, i18n(self.name()))
@@ -118,39 +107,30 @@ class CPUTemp(plasmascript.Applet):
 		# update local variables
 		self.color = str(self.configpage.ui.kcb_color.color().name())
 		self.interval = int(self.configpage.ui.sb_interval.value())
-		self.method = str(self.configpage.ui.cb_method.currentText())
 		self.overheat_level = int(self.configpage.ui.sb_overheat_level.value())
 		self.overheat_color = str(self.configpage.ui.kcb_overheat_color.color().name())
-		self.units = str(self.configpage.ui.cb_units.currentText())
 
 		# save config to settings
 		self.settings.set('color', self.color)
 		self.settings.set('interval', self.interval)
-		self.settings.set('units', self.units)
 		self.settings.set('overheat_color', self.overheat_color)
 		self.settings.set('overheat_level', self.overheat_level)
-		self.settings.set('method', self.method)
 
 		# update timer
 		self.timer.setInterval(self.interval)
-
 		self.startPolling()
 			
 		print '[%s]: config accepted' % self._name
 
 	def updateLabel(self):
-		t = self.adapter.getTemperature()
+		file = open('/sys/class/thermal/thermal_zone0/temp')
+		t = int(file.readline()) / 1000
 
-		print t
-		print self.overheat_level
-		
 		if t > self.overheat_level:
-			print 'over'
 			self.color = self.overheat_color
 		else:
-			print self.color
 			self.color = self.settings.get('color', self.color)
-			
+
 		self.label.setText('<font style="color:' + self.color + '"><b>' + str(t) + '&deg; C</b></font>')
 
 	def showTooltip(self, text):
