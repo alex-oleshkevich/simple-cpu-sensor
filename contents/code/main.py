@@ -127,14 +127,22 @@ class CPUTemp(plasmascript.Applet):
         t = 0
         if os.path.exists('/sys/class/thermal/thermal_zone0/temp'):
             t = int(open('/sys/class/thermal/thermal_zone0/temp').read().strip()) / 1000
+            
         elif os.path.exists('/proc/acpi/thermal_zone/THM0/temperature'):
             t = open("/proc/acpi/thermal_zone/THM0/temperature").read().strip().lstrip('temperature :').rstrip(' C')
+            
         elif os.path.exists('/proc/acpi/thermal_zone/THRM/temperature') :
             t = open("/proc/acpi/thermal_zone/THRM/temperature").read().strip().lstrip('temperature :').rstrip(' C')
-        elif os.path.exists('/proc/acpi/thermal_zone/THRM/temperature') :
-            t = open("/proc/acpi/thermal_zone/THRM/temperature").read().strip().lstrip('temperature :').rstrip(' C')
+            
+        elif os.path.exists('/proc/acpi/thermal_zone/THR1/temperature') :
+            t = open("/proc/acpi/thermal_zone/THR1/temperature").read().strip().lstrip('temperature :').rstrip(' C')
+            
+        elif os.path.exists('/sys/bus/platform/devices/coretemp.0/temp2_input'):
+            t = int(open('/sys/bus/platform/devices/coretemp.0/temp2_input').read().strip()) / 1000
+
         elif os.path.exists('/sys/devices/LNXSYSTM:00/LNXTHERM:00/LNXTHERM:01/thermal_zone/temp') :
             t = open("/sys/devices/LNXSYSTM:00/LNXTHERM:00/LNXTHERM:01/thermal_zone/temp").read().strip().rstrip('000')
+            
         elif os.path.exists('/sys/bus/acpi/devices/LNXTHERM:00/thermal_zone/temp') :
             t = open("/sys/bus/acpi/devices/LNXTHERM:00/thermal_zone/temp").read().strip().rstrip('000')
             t = str(float(t)/10.0)
