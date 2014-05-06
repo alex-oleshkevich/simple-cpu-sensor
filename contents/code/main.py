@@ -51,7 +51,11 @@ class CPUTemp(plasmascript.Applet):
         self.settings = SimpleSensorConfig(self.config(), self.pluginName)
         
         self.engine = self.dataEngine("systemmonitor")
-        self.source = None
+        
+        self.engine.sourceAdded.connect(self.sourceAdded)
+        self.engine.sourceRemoved.connect(self.sourceRemoved)
+        
+        self.source = self.settings.readEntry("sensor").toString()
         
         self.setHasConfigurationInterface(True)
         self.start()
@@ -69,8 +73,17 @@ class CPUTemp(plasmascript.Applet):
             pass
     
     @pyqtSlot(str)
-    def sourceAdded(self, source, data):
-        pass
+    def sourceAdded(self, source):
+        if source == self.source:
+            self.start()
+            
+    @pyqtSlot(str)
+    def sourceRemoved(self, source):
+        if source == self.soruce:
+            self.engine.disconnectSource(self.source, self)
+    
+    def connectToSource(self):
+            self.engine.connectSource(self.source, self, self.settings.readEntry("interval_ms").toPyObject())
     
     def start(self):
         if not self.source:
@@ -78,6 +91,7 @@ class CPUTemp(plasmascript.Applet):
             self.showTooltip("<b>Select a sensor from the configuration dialog</b>")
         elif self.source:
             self.setConfigurationRequired(False)
+            self.connectToSource()
         
     # ---------------------- configuration ------------------------#
     def createConfigurationInterface(self, parent):
@@ -106,15 +120,11 @@ class CPUTemp(plasmascript.Applet):
         self.settings.writeEntry("overheat_color", self.configpage.ui.kcb_overheat_color.color())
         self.settings.writeEntry("sensor", self.configpage.ui.sensor_device.currentText())
         
-        if self.settings.readEntry("sensor").toPyObject():
+        if self.settings.readEntry("sensor").toString():
             if self.source:
-                self.engine.disconnectSource(self.engine, self)
-            
-            self.source = self.settings.readEntry("sensor").toPyObject()
-            interval = self.settings.readEntry("interval_ms").toPyObject()
-            self.engine.connectSource(self.source, self, interval)
-        
-        print self.source
+                self.engine.disconnectSource(self.source, self)
+            self.source = self.settings.readEntry("sensor").toString()
+
         self.start()
             
     
