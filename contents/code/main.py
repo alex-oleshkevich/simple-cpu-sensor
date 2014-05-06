@@ -146,6 +146,10 @@ class CPUTemp(plasmascript.Applet):
         elif os.path.exists('/sys/bus/acpi/devices/LNXTHERM:00/thermal_zone/temp') :
             t = open("/sys/bus/acpi/devices/LNXTHERM:00/thermal_zone/temp").read().strip().rstrip('000')
             t = str(float(t)/10.0)
+
+        elif os.path.exists('/sys/class/hwmon/hwmon1/device/temp1_input') :
+            t = open("/sys/class/hwmon/hwmon1/device/temp1_input").read().strip()
+            t = int(float(t)/1000.0)
             
         return t
     
