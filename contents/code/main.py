@@ -134,7 +134,7 @@ class CPUTemp(plasmascript.Applet):
         if value > self.settings.readEntry('overheat_level').toPyObject():
             color = QColor(self.settings.readEntry('overheat_color'))
         else:
-            color = QColor(self.settings.get('color'))
+            color = QColor(self.settings.readEntry('color'))
         
         #TODO: format specification in config dialog.
         text = '<font style="color:%s" ><b>%3.0f&deg;%s</b></font>' % (color.name(), value, units)

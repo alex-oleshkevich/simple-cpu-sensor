@@ -27,6 +27,7 @@ from PyKDE4.kdecore import KGlobal, KLocale
 
 from PyKDE4.plasma import Plasma
 from PyQt4.QtGui import QColor
+from PyQt4.QtCore import QVariant
 
 ##
 # Configuration manager
