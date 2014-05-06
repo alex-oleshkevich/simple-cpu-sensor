@@ -1,3 +1,27 @@
+# -*- coding: utf-8 -*-
+#   Copyright 2012 Alex Oleshkevich <alex.oleshkevich@gmail.com>
+#   Copyright 2014 Lyle Putnam   <lcputnam@gmail.com>
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU Library General Public License as
+#   published by the Free Software Foundation; either version 2 or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#
+#   GNU General Public License for more details
+#
+#
+#   You should have received a copy of the GNU Library General Public
+#   License along with this program; if not, write to the
+#   Free Software Foundation, Inc.,
+#
+#   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyKDE4.kdecore import *
@@ -5,7 +29,7 @@ from PyKDE4.kdeui import *
 from PyKDE4.kio import *
 from PyKDE4.plasma import Plasma
 from PyKDE4 import plasmascript
-from PyQt4 import QtCore
+from PyKDE4.kdecore import KLocale
 
 import os
 
@@ -20,144 +44,98 @@ class CPUTemp(plasmascript.Applet):
         plasmascript.Applet.__init__(self,parent)
         
     def init(self):
-        self._name = str(self.package().metadata().pluginName())
         self.layout = QGraphicsLinearLayout(Qt.Horizontal, self.applet)
-        self.setHasConfigurationInterface(True)
-        
         self.label = Plasma.Label(self.applet)
-        self.label.setText("N\A")
         self.layout.addItem(self.label)
         self.applet.setLayout(self.layout)
-
-        # Setup configuration
-        self.settings = Config(self)
-        self.color = self.settings.get('color', '#EEE')
-        self.interval = int(self.settings.get('interval', 500))
-        self.font_family = str(self.settings.get('font_family', 'Dejavu Sans'))
-        self.font_size = int(self.settings.get('font_size', 10))
-        self.font_weight = int(self.settings.get('font_weight', 10))
-        self.units = self.settings.get('units', 'Celsius')
+        self.settings = SimpleSensorConfig(self.config(), self.pluginName)
         
-        self.overheat_level = int(self.settings.get('overheat_level', 80))
-        self.overheat_color = self.settings.get('overheat_color', '#f00')
+        self.engine = self.dataEngine("systemmonitor")
+        self.source = None
+        
+        self.setHasConfigurationInterface(True)
+        self.start()
 
-        # start timer
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(self.interval)
-
-        self.startPolling()
-
-    def startPolling(self):
+    # FIXME: @pyqtSlot is preferred, but I can't find a way to make it work here.
+    @pyqtSignature("dataUpdated(const QString &, const Plasma::DataEngine::Data &)")
+    def dataUpdated(self, source, data):
         try:
-            self.timer.start()
-            QtCore.QObject.connect(self.timer, QtCore.SIGNAL("timeout()"), self.updateLabel)
-
-            # update temp label
-            self.updateLabel()
-            self.showTooltip('')
-        except Exception as (strerror):
-            self.showTooltip(str(strerror))
-            self.label.setText('<font color="red">ERROR</font>')
-            return
+            name = data[QString('name')]
+            (temp, ok) = data[QString('value')].toFloat()
+            if ok:
+                self.updateLabel(name, temp)
+        # NOTE: Sometimes the value isn't available right away. That's not really a problem.
+        except KeyError:
+            pass
+    
+    @pyqtSlot(str)
+    def sourceAdded(self, source, data):
+        pass
+    
+    def start(self):
+        if not self.source:
+            self.setConfigurationRequired(True)
+            self.showTooltip("<b>Select a sensor from the configuration dialog</b>")
+        elif self.source:
+            self.setConfigurationRequired(False)
         
     # ---------------------- configuration ------------------------#
     def createConfigurationInterface(self, parent):
-        self.configpage = ConfigWindow(self, self.settings)
-
-        font = QFont(str(self.settings.get('font_family', 'Dejavu Sans')), int(self.settings.get('font_size', 10)), int(int(self.settings.get('font_weight', 50))))
-        # prefill fields
-        self.configpage.ui.kcb_color.setColor(QColor(self.settings.get('color', '#ffffff')))
-        self.configpage.ui.sb_interval.setValue(int(self.settings.get('interval', 500)))
-        self.configpage.ui.sb_overheat_level.setValue(int(self.settings.get('overheat_level', 80)))
-        self.configpage.ui.kcb_overheat_color.setColor(QColor(self.settings.get('overheat_color', '#ff0000')))
-        self.configpage.ui.fontComboBox.setCurrentFont(font)
-        self.configpage.ui.spin_size.setValue(int(self.settings.get('font_size', 10)))
-        self.configpage.ui.cb_units.setCurrentIndex(self.configpage.ui.cb_units.findText(self.settings.get('units', 'Celsius')))
-        self.configpage.ui.cb_units.setCurrentIndex(self.configpage.ui.cb_units.findText(self.settings.get('units', 'Celsius')))
+        self.configpage = ConfigWindow(self, self.settings, self.engine)
 
         # add config page
         page = parent.addPage(self.configpage, i18n(self.name()))
         page.setIcon(KIcon(self.icon()))
 
         parent.okClicked.connect(self.configAccepted)
+        parent.applyClicked.connect(self.configAccepted)
+
 
     # show configuration window
     def showConfigurationInterface(self):
         plasmascript.Applet.showConfigurationInterface(self)
-
-    # if config accepted
-    def configAccepted(self):
-        # update local variables
-        self.color = str(self.configpage.ui.kcb_color.color().name())
-        self.interval = int(self.configpage.ui.sb_interval.value())
-        self.overheat_level = int(self.configpage.ui.sb_overheat_level.value())
-        self.overheat_color = str(self.configpage.ui.kcb_overheat_color.color().name())
-        self.font_family = str(self.configpage.ui.fontComboBox.currentFont().family())
-        self.font_size = int(self.configpage.ui.spin_size.value())
-        self.units = str(self.configpage.ui.cb_units.currentText())
-        
-        # save config to settings
-        self.settings.set('color', self.color)
-        self.settings.set('interval', self.interval)
-        self.settings.set('overheat_color', self.overheat_color)
-        self.settings.set('overheat_level', self.overheat_level)
-        self.settings.set('font_size', self.font_size)
-        self.settings.set('font_family', self.font_family)
-        self.settings.set('font_weight', self.font_weight)
-        self.settings.set('units', self.units)
-
-        # update timer
-        self.timer.setInterval(self.interval)
-        self.startPolling()
-            
-        print '[%s]: config accepted' % self._name
-
-    def updateLabel(self):
-        t = self.convertUnits(self.getTemperature(), self.units)
-        
-        if t > self.overheat_level:
-            self.color = self.overheat_color
-        else:
-            self.color = self.settings.get('color', self.color)
-            
-        text = '<font style="color:%s;font: %dpt \'%s\';"><b>%s&deg; %s</b></font>' % (self.color, self.font_size, self.font_family, str(t), self.units[0])
-        self.label.setText(text)
-        
-    def getTemperature(self):
-        t = 0
-        if os.path.exists('/sys/class/thermal/thermal_zone0/temp'):
-            t = int(open('/sys/class/thermal/thermal_zone0/temp').read().strip()) / 1000
-            
-        elif os.path.exists('/proc/acpi/thermal_zone/THM0/temperature'):
-            t = open("/proc/acpi/thermal_zone/THM0/temperature").read().strip().lstrip('temperature :').rstrip(' C')
-            
-        elif os.path.exists('/proc/acpi/thermal_zone/THRM/temperature') :
-            t = open("/proc/acpi/thermal_zone/THRM/temperature").read().strip().lstrip('temperature :').rstrip(' C')
-            
-        elif os.path.exists('/proc/acpi/thermal_zone/THR1/temperature') :
-            t = open("/proc/acpi/thermal_zone/THR1/temperature").read().strip().lstrip('temperature :').rstrip(' C')
-            
-        elif os.path.exists('/sys/bus/platform/devices/coretemp.0/temp2_input'):
-            t = int(open('/sys/bus/platform/devices/coretemp.0/temp2_input').read().strip()) / 1000
-
-        elif os.path.exists('/sys/devices/LNXSYSTM:00/LNXTHERM:00/LNXTHERM:01/thermal_zone/temp') :
-            t = open("/sys/devices/LNXSYSTM:00/LNXTHERM:00/LNXTHERM:01/thermal_zone/temp").read().strip().rstrip('000')
-            
-        elif os.path.exists('/sys/bus/acpi/devices/LNXTHERM:00/thermal_zone/temp') :
-            t = open("/sys/bus/acpi/devices/LNXTHERM:00/thermal_zone/temp").read().strip().rstrip('000')
-            t = str(float(t)/10.0)
-
-        elif os.path.exists('/sys/class/hwmon/hwmon1/device/temp1_input') :
-            t = open("/sys/class/hwmon/hwmon1/device/temp1_input").read().strip()
-            t = int(float(t)/1000.0)
-            
-        return t
     
-    def convertUnits(self, value, unit):
-        if unit == "Fahrenheit":
-            return value * 9/5.0 + 32
+      # if config accepted
+    def configAccepted(self):
+        font = self.configpage.ui.fontComboBox.currentFont()
+        font.setPointSize(int(self.configpage.ui.spin_size.value()))
+        self.settings.writeEntry("font", font)
+        self.settings.writeEntry("interval_ms", self.configpage.ui.sb_interval.value())
+        self.settings.writeEntry("overheat_level", self.configpage.ui.sb_overheat_level.value())
+        self.settings.writeEntry("normal_color", self.configpage.ui.kcb_color.color())
+        self.settings.writeEntry("overheat_color", self.configpage.ui.kcb_overheat_color.color())
+        self.settings.writeEntry("sensor", self.configpage.ui.sensor_device.currentText())
+        
+        if self.settings.readEntry("sensor").toPyObject():
+            if self.source:
+                self.engine.disconnectSource(self.engine, self)
+            
+            self.source = self.settings.readEntry("sensor").toPyObject()
+            interval = self.settings.readEntry("interval_ms").toPyObject()
+            self.engine.connectSource(self.source, self, interval)
+        
+        print self.source
+        self.start()
+            
+    
+    def updateLabel(self, label, temp):
+        (value,units) = self.convertUnits(temp, KLocale.MeasureSystem(self.settings.readEntry("units").toPyObject()))
+        
+        if value > self.settings.readEntry('overheat_level').toPyObject():
+            color = QColor(self.settings.readEntry('overheat_color'))
         else:
-            return value
+            color = QColor(self.settings.get('color'))
+        
+        #TODO: format specification in config dialog.
+        text = '<font style="color:%s" ><b>%3.0f&deg;%s</b></font>' % (color.name(), value, units)
+        self.label.setText(text)
+        self.showTooltip("<b>Temperature</b><br />%s: %0.2f&deg;%s" % (label, value, units))
+    
+    def convertUnits(self, value, system):
+        if system == KLocale.Imperial:
+            return (value * 9/5.0 + 32, "F")
+        else:
+            return (value, "C")
     
     def showTooltip(self, text):
             # create and set tooltip
