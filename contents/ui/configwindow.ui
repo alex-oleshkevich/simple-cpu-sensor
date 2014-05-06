@@ -102,6 +102,12 @@
      </item>
      <item row="1" column="2">
       <widget class="QSpinBox" name="sb_interval">
+       <property name="suffix">
+        <string>ms</string>
+       </property>
+       <property name="minimum">
+        <number>100</number>
+       </property>
        <property name="maximum">
         <number>10000</number>
        </property>
@@ -117,6 +123,9 @@
       <widget class="QSpinBox" name="sb_overheat_level">
        <property name="toolTip">
         <string>Maximum temperature level before changing to alert color</string>
+       </property>
+       <property name="suffix">
+        <string>°</string>
        </property>
        <property name="maximum">
         <number>200</number>
@@ -152,6 +161,16 @@
         <string>Font</string>
        </property>
       </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Sensor Device</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
+      <widget class="QComboBox" name="sensor_device"/>
      </item>
     </layout>
    </item>

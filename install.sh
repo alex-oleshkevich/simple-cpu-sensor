@@ -1,2 +1,2 @@
- #!/bin/bash
- plasmapkg -u .
+ #!/bin/bash 
+plasmapkg -u . || plasmapkg -i .
