@@ -18,4 +18,3 @@ X-KDE-PluginInfo-Website=http://kde-look.org/content/show.php/Simple+CPU+Sensor?
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
 X-Plasma-API=python
 X-Plasma-MainScript=code/main.py
-X-Plasma-RemoteLocation=https://github.com/alex-oleshkevich/simple-cpu-sensor
