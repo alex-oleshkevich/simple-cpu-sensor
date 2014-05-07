@@ -126,18 +126,21 @@ class CPUTemp(plasmascript.Applet):
             self.source = self.settings.readEntry("sensor").toString()
 
         self.start()
-            
     
     def updateLabel(self, label, temp):
         (value,units) = self.convertUnits(temp, KLocale.MeasureSystem(self.settings.readEntry("units").toPyObject()))
         
+        font = self.settings.readEntry('font').toPyObject()
         if value > self.settings.readEntry('overheat_level').toPyObject():
             color = QColor(self.settings.readEntry('overheat_color'))
         else:
             color = QColor(self.settings.readEntry('normal_color'))
+            
+        print font.family()
         
         #TODO: format specification in config dialog.
-        text = '<font style="color:%s" ><b>%3.0f&deg;%s</b></font>' % (color.name(), value, units)
+        text = '<font style="color:%s;font: %dpt \'%s\';"><b>%s&deg; %s</b></font>' % (color.name(), font.pointSize(), font.family(), str(value), units)
+        
         self.label.setText(text)
         self.showTooltip("<b>Temperature</b><br />%s: %0.2f&deg;%s" % (label, value, units))
     
