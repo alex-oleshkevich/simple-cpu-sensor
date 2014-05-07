@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #   Copyright 2012 Alex Oleshkevich <alex.oleshkevich@gmail.com>
-#
+#   Copyright 2014 Lyle Putnam <lcutnam@gmail.com>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU Library General Public License as
@@ -22,29 +22,31 @@
 #   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #
 
+from PyKDE4.kdecore import KConfigGroup
+from PyKDE4.kdecore import KGlobal, KLocale
+
+from PyKDE4.plasma import Plasma
+from PyQt4.QtGui import QColor
+from PyQt4.QtCore import QVariant
+
 ##
 # Configuration manager
 ##
-class Config():
-	def __init__(self, applet):
-		self.applet = applet
-		self.config = self.applet.globalConfig()
-		
-	##
-	# Read option from configuration file
-	#
-	# @param key string The option name
-	# @param default mixed The default value if option is not found 
-	# @param section string [optional] The section to write in
-	# @return int|string The value
-	def get(self, key, default = ''):
-		return self.config.readEntry(key, default).toString()
-
-	##
-	# Set option to configuration file
-	#
-	# @param key string The option name
-	# @param value mixed The value to set
-	# @return void
-	def set(self, key, value):
-		self.config.writeEntry(key, value)
+class SimpleSensorConfig(KConfigGroup):
+    def __init__(self, *args):
+        KConfigGroup.__init__(self, *args)
+        self.defaults = {
+                         "normal_color": Plasma.Theme.defaultTheme().color(Plasma.Theme.TextColor),
+                         "overheat_color": QColor(255,0,0),
+                         "overheat_level": 80,
+                         "font": Plasma.Theme.defaultTheme().font(Plasma.Theme.DefaultFont),
+                         "sensor": "",
+                         "interval_ms": 1000,
+                         "units": KGlobal.locale().measureSystem()
+                        }
+    
+    def readEntry(self, key, default=0):
+        if self.hasKey(key) or key in self.defaults:
+            return KConfigGroup.readEntry(self, key, self.defaults[key])
+        else:
+            return QVariant(default)
