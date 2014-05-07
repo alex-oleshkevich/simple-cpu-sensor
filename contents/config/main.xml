@@ -5,15 +5,15 @@
      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
     <kcfgfile name=""/>
     <group name="General">
-        <entry name="normal_color" type="Color">
+        <entry name="normalColor" type="Color">
             <label>Normal color</label>
-            <default>#000</default>
+            <default>#333</default>
         </entry>
-        <entry name="overheat_color" type="String">
+        <entry name="overheatColor" type="String">
             <label>Overheat color</label>
             <default>#f00</default>
         </entry>
-        <entry name="overheat_level" type="string">
+        <entry name="overheatLevel" type="string">
             <label></label>
             <default>80</default>
         </entry>
@@ -21,13 +21,13 @@
             <label></label>
             <default>1000</default>
         </entry>
-        <entry name="font" type="Font">
+        <entry name="font" type="string">
             <label>TODO</label>
-            <default>Dejavu Sans, 20</default>
+            <default>Dejavu Sans, 12</default>
         </entry>
-        <entry name="units" type="string">
+        <entry name="units" type="int">
             <label>TODO</label>
-            <default>Celsius</default>
+            <default>0</default>
         </entry>
         <entry name="sensor" type="string">
             <label>TODO</label>

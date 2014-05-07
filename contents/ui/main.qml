@@ -1,70 +1,110 @@
 import QtQuick 1.0
-import org.kde.plasma.components 0.1 as PlasmaComponents
 import org.kde.plasma.core 0.1 as PlasmaCore
 
 Item {
-    id: main
-    width: 48
-    height: 48
+    id: root
+    
     property int     minimumWidth: 48
     property int     minimumHeight: 48
-    property int     interval: plasmoid.readConfig("interval")
-    property string  normalColor: plasmoid.readConfig("normal_color")
-    property string  overheatColor: plasmoid.readConfig("overheat_color")
-    property string  overheatLevel: plasmoid.readConfig("overheat_level")
-    property string  units: plasmoid.readConfig("units")
-    property string  sensor: plasmoid.readConfig("sensor")
-    property string  font: plasmoid.readConfig("font")
-    property string  fontFamily: font.toString().split(',')[0]
-    property string  fontSize: font.toString().split(',')[1]
+    property int     interval: 1000
+    property string  normalColor: theme.textColor
+    property string  overheatColor: '#f00'
+    property int     overheatLevel: 80
+    property int     units: 0
+    property string  unitsSign: 'C'
+    property string  sensor: ''
+    property string  fontFamily: ''
+    property int     fontSize: 1
     
     PlasmaCore.Theme {
         id: theme
     }
     
-    Component.onCompleted: {
-        plasmoid.addEventListener('ConfigChanged', function () {
-            print(plasmoid.readConfig('font'))
-            
-            plasmoid.activeConfig = "main";
-            font = plasmoid.readConfig('font')
-            interval = plasmoid.readConfig('interval')
-            normalColor = plasmoid.readConfig('normalColor')
-            overheatColor = plasmoid.readConfig('overheatColor')
-            overheatLevel = plasmoid.readConfig('overheatLevel')
-            units = plasmoid.readConfig('units')
-            sensor = plasmoid.readConfig('sensor')
-            
-            text.color = normalColor
-            
-        })
-    }
-    
-    Text {
+    Text: {
         id: text
+        text: '0°' + unitsSign
         color: normalColor
-        visible: true
-        text: i18n("10 C")
-        anchors.fill: parent
+        height: 48
         horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignTop
         font {
             family: fontFamily
             pointSize: fontSize
         }
-
+    }
+    
+    property Component compactRepresentation: {
+        text: 'aaaa'
+    }
+    
+    Component.onCompleted: {
+        plasmoid.addEventListener('ConfigChanged', function () {
+            var font = plasmoid.readConfig('font')
+            
+            print ('font: ' + font)
+            
+            fontFamily = font.toString().split(',')[0]
+            print('font family: ' + fontFamily)
+            
+            fontSize = font.toString().split(',')[1]
+            print('font size: ' + fontSize)
+            
+            interval = plasmoid.readConfig('interval')
+            print('interval: ' + interval)
+            
+            normalColor = plasmoid.readConfig('normalColor')
+            print('normal color: ' + normalColor)
+            
+            overheatColor = plasmoid.readConfig('overheatColor')
+            print('overheat color: ' + overheatColor)
+            
+            overheatLevel = plasmoid.readConfig('overheatLevel')
+            print('overheat level: ' + overheatLevel)
+            
+            units = plasmoid.readConfig('units')
+            print('units: ' + units)
+            
+            sensor = plasmoid.readConfig('sensor')
+            print('sensor: ' + sensor)
+            
+            if (units == 1) {
+                unitsSign = 'F'
+            }
+            print('units sign: ' + unitsSign)
+        })
     }
     
     PlasmaCore.DataSource {
-            id: dataSource
-            engine: "systemmonitor"
-            connectedSources: ["Local","UTC"]
-            interval: 500
+        id: tDataSource
+        engine: "systemmonitor"
+        interval: 1000
 
-            onNewData: {
-                console.log(data)
+        onSourceAdded: {
+            disconnectSource(source)
+            connectSource(source)
+        }
+        
+        onNewData: {
+            if (sourceName == 'lmsensors/coretemp-isa-0000/Physical_id_0') {
+                setTemperatureValue(data.value)
             }
-
+        }
     }
     
-
+    function setTemperatureValue(value) {
+        if (value) {
+            var value = Math.ceil(value)
+            if (value > overheatLevel) {
+                text.color = overheatColor
+            } else {
+                text.color = normalColor
+            }
+    
+            
+            if (units == 1) {
+                value = Math.ceil(value * 9/5.0 + 32)
+            }
+            text.text = value + '°' + unitsSign
+        }
+    }
 }

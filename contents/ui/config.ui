@@ -53,7 +53,7 @@
     </widget>
    </item>
    <item row="3" column="2">
-    <widget class="QSpinBox" name="interval">
+    <widget class="QSpinBox" name="kcfg_interval">
      <property name="suffix">
       <string>ms</string>
      </property>
@@ -71,11 +71,8 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="2">
-    <widget class="KFontRequester" name="font"/>
-   </item>
    <item row="2" column="2">
-    <widget class="QSpinBox" name="overheat_level">
+    <widget class="QSpinBox" name="kcfg_overheatLevel">
      <property name="toolTip">
       <string>Maximum temperature level before changing to alert color</string>
      </property>
@@ -94,7 +91,7 @@
     </widget>
    </item>
    <item row="8" column="2">
-    <widget class="QComboBox" name="sensor"/>
+    <widget class="QComboBox" name="kcfg_sensor"/>
    </item>
    <item row="7" column="0">
     <widget class="QLabel" name="label_2">
@@ -104,7 +101,7 @@
     </widget>
    </item>
    <item row="7" column="2">
-    <widget class="QComboBox" name="units">
+    <widget class="QComboBox" name="kcfg_units">
      <item>
       <property name="text">
        <string>Celsius</string>
@@ -118,7 +115,7 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="KColorButton" name="normal_color">
+    <widget class="KColorButton" name="kcfg_normalColor">
      <property name="color">
       <color>
        <red>255</red>
@@ -143,7 +140,7 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="KColorButton" name="overheat_color">
+    <widget class="KColorButton" name="kcfg_overheatColor">
      <property name="toolTip">
       <string>Alert color</string>
      </property>
@@ -155,6 +152,9 @@
       </color>
      </property>
     </widget>
+   </item>
+   <item row="6" column="2">
+    <widget class="KFontRequester" name="kcfg_font"/>
    </item>
   </layout>
  </widget>
