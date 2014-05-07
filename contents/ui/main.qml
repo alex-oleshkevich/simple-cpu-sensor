@@ -1,11 +1,21 @@
 import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
 
-Item {
+Text {
     id: root
     
+    text: label
+    color: labelColor
     property int     minimumWidth: 48
     property int     minimumHeight: 48
+    height: 48
+    horizontalAlignment: Text.AlignLeft
+    verticalAlignment: Text.AlignTop
+    font {
+        family: fontFamily
+        pointSize: fontSize
+    }
+    
     property int     interval: 1000
     property string  normalColor: theme.textColor
     property string  overheatColor: '#f00'
@@ -16,26 +26,27 @@ Item {
     property string  fontFamily: ''
     property int     fontSize: 1
     
+    property string  label: '0°' + unitsSign
+    property string  labelColor: normalColor
+    
     PlasmaCore.Theme {
         id: theme
     }
     
-    Text: {
+    /*property Component compactRepresentation: Text {
         id: text
-        text: '0°' + unitsSign
-        color: normalColor
+        text: label
+        color: labelColor
+        property int     minimumWidth: 48
+        property int     minimumHeight: 48
         height: 48
-        horizontalAlignment: Text.AlignHCenter
+        horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignTop
         font {
             family: fontFamily
             pointSize: fontSize
         }
-    }
-    
-    property Component compactRepresentation: {
-        text: 'aaaa'
-    }
+    }*/
     
     Component.onCompleted: {
         plasmoid.addEventListener('ConfigChanged', function () {
@@ -95,16 +106,16 @@ Item {
         if (value) {
             var value = Math.ceil(value)
             if (value > overheatLevel) {
-                text.color = overheatColor
+                labelColor = overheatColor
             } else {
-                text.color = normalColor
+                labelColor = normalColor
             }
     
             
             if (units == 1) {
                 value = Math.ceil(value * 9/5.0 + 32)
             }
-            text.text = value + '°' + unitsSign
+           label = value + '°' + unitsSign
         }
     }
 }
