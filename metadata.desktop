@@ -15,6 +15,7 @@ X-KDE-PluginInfo-Name=simple-cpu-sensor
 X-KDE-PluginInfo-Version=0.5.5
 X-KDE-PluginInfo-Website=https://github.com/lcputnam/simple-cpu-sensor,https://github.com/alex-oleshkevich/simple-cpu-sensor
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/PopupApplet
+X-Plasma-NotificationArea=false
 X-Plasma-API=python
 X-Plasma-MainScript=code/main.py
 

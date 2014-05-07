@@ -136,10 +136,8 @@ class CPUTemp(plasmascript.Applet):
         else:
             color = QColor(self.settings.readEntry('normal_color'))
             
-        print font.family()
-        
         #TODO: format specification in config dialog.
-        text = '<font style="color:%s;font: %dpt \'%s\';"><b>%s&deg; %s</b></font>' % (color.name(), font.pointSize(), font.family(), str(value), units)
+        text = '<font style="color:%s;font: %dpt \'%s\';"><b>%s&deg; %s</b></font>' % (color.name(), font.pointSize(), font.family(), str(int(value)), units)
         
         self.label.setText(text)
         self.showTooltip("<b>Temperature</b><br />%s: %0.2f&deg;%s" % (label, value, units))
