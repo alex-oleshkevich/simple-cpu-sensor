@@ -1,20 +1,8 @@
 import QtQuick 1.0
 import org.kde.plasma.core 0.1 as PlasmaCore
 
-Text {
+Item {
     id: root
-    
-    text: label
-    color: labelColor
-    property int     minimumWidth: 48
-    property int     minimumHeight: 48
-    height: 48
-    horizontalAlignment: Text.AlignLeft
-    verticalAlignment: Text.AlignTop
-    font {
-        family: fontFamily
-        pointSize: fontSize
-    }
     
     property int     interval: 1000
     property string  normalColor: theme.textColor
@@ -31,6 +19,21 @@ Text {
     
     PlasmaCore.Theme {
         id: theme
+    }
+    
+    Text {
+        text: label
+        color: labelColor
+        anchors.centerIn: parent
+        property int     minimumWidth: 48
+        property int     minimumHeight: 48
+        height: 48
+        horizontalAlignment: Text.AlignLeft
+        verticalAlignment: Text.AlignTop
+        font {
+            family: fontFamily
+            pointSize: fontSize
+        }    
     }
     
     /*property Component compactRepresentation: Text {
@@ -86,7 +89,7 @@ Text {
     }
     
     PlasmaCore.DataSource {
-        id: tDataSource
+        id: temperatureDataSource
         engine: "systemmonitor"
         interval: 1000
 
@@ -96,12 +99,34 @@ Text {
         }
         
         onNewData: {
-            if (sourceName == 'lmsensors/coretemp-isa-0000/Physical_id_0') {
+            if (sourceName == 'lmsensors/coretemp-isa-0000/Core_0') {
                 setTemperatureValue(data.value)
             }
         }
     }
+    /*
+    PlasmaCore.DataModel {
+        id: temperatureDataModel
+        dataSource: temperatureDataSource
+    }
     
+    PlasmaCore.SortFilterModel {
+        id: sortedEntriesDataModel
+        
+        filterRole: "isDevice"
+        filterRegExp: "false"
+            
+        sourceModel: PlasmaCore.SortFilterModel {
+            sourceModel: temperatureDataModel
+            
+            filterRole: "hidden"
+            filterRegExp: "false"
+            
+            sortRole: "isDevice"
+            sortOrder: "AscendingOrder"
+       }
+    }
+    */
     function setTemperatureValue(value) {
         if (value) {
             var value = Math.ceil(value)
