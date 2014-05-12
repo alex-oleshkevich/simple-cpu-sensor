@@ -33,8 +33,6 @@ Item {
         verticalAlignment: Text.AlignVCenter
         anchors {
             centerIn: parent
-            leftMargin: 10
-            rightMargin: 10
             left: parent.left
             right: parent.right
         }
