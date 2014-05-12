@@ -4,6 +4,17 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 Item {
     id: root
     
+
+    
+    Text {
+        text: label
+        color: labelColor
+        anchors.centerIn: parent
+        property int     minimumWidth: 48
+        property int     minimumHeight: 48
+        horizontalAlignment: Text.AlignLeft
+        verticalAlignment: Text.AlignTop
+        
     property int     interval: 1000
     property string  normalColor: theme.textColor
     property string  overheatColor: '#f00'
@@ -13,43 +24,14 @@ Item {
     property string  sensor: ''
     property string  fontFamily: ''
     property int     fontSize: 1
-    
     property string  label: '0°' + unitsSign
     property string  labelColor: normalColor
-    
-    PlasmaCore.Theme {
-        id: theme
-    }
-    
-    Text {
-        text: label
-        color: labelColor
-        anchors.centerIn: parent
-        property int     minimumWidth: 48
-        property int     minimumHeight: 48
-        height: 48
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignTop
+        
         font {
             family: fontFamily
             pointSize: fontSize
         }    
     }
-    
-    /*property Component compactRepresentation: Text {
-        id: text
-        text: label
-        color: labelColor
-        property int     minimumWidth: 48
-        property int     minimumHeight: 48
-        height: 48
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignTop
-        font {
-            family: fontFamily
-            pointSize: fontSize
-        }
-    }*/
     
     Component.onCompleted: {
         plasmoid.addEventListener('ConfigChanged', function () {
@@ -81,6 +63,9 @@ Item {
             sensor = plasmoid.readConfig('sensor')
             print('sensor: ' + sensor)
             
+            console.log(units)
+            
+            unitsSign = 'C'
             if (units == 1) {
                 unitsSign = 'F'
             }
@@ -140,7 +125,7 @@ Item {
             if (units == 1) {
                 value = Math.ceil(value * 9/5.0 + 32)
             }
-           label = value + '°' + unitsSign
+           text.label = value + '°' + unitsSign
         }
     }
 }
