@@ -4,17 +4,6 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 Item {
     id: root
     
-
-    
-    Text {
-        text: label
-        color: labelColor
-        anchors.centerIn: parent
-        property int     minimumWidth: 48
-        property int     minimumHeight: 48
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignTop
-        
     property int     interval: 1000
     property string  normalColor: theme.textColor
     property string  overheatColor: '#f00'
@@ -26,7 +15,15 @@ Item {
     property int     fontSize: 1
     property string  label: '0°' + unitsSign
     property string  labelColor: normalColor
-        
+    
+    Text {
+        text: label
+        color: labelColor
+        anchors.centerIn: parent
+        property int     minimumWidth: 48
+        property int     minimumHeight: 48
+        horizontalAlignment: Text.AlignLeft
+        verticalAlignment: Text.AlignTop
         font {
             family: fontFamily
             pointSize: fontSize
@@ -125,7 +122,7 @@ Item {
             if (units == 1) {
                 value = Math.ceil(value * 9/5.0 + 32)
             }
-           text.label = value + '°' + unitsSign
+           label = value + '°' + unitsSign
         }
     }
 }
