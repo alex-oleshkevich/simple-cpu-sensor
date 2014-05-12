@@ -23,7 +23,19 @@
         </entry>
         <entry name="font" type="string">
             <label>TODO</label>
-            <default>Dejavu Sans, 12</default>
+            <default>Dejavu Sans</default>
+        </entry>
+        <entry name="fontSize" type="int">
+            <label>TODO</label>
+            <default>20</default>
+        </entry>
+        <entry name="fontBold" type="string">
+            <label>TODO</label>
+            <default>false</default>
+        </entry>
+        <entry name="fontItalic" type="string">
+            <label>TODO</label>
+            <default>false</default>
         </entry>
         <entry name="units" type="int">
             <label>TODO</label>

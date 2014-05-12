@@ -1,114 +1,69 @@
-import QtQuick 1.0
+import QtQuick 1.1
 import org.kde.plasma.core 0.1 as PlasmaCore
+import org.kde.plasma.components 0.1 as Components
 
 Item {
-    id: root
-    
+    id: main
+      
     property int     interval: 1000
     property string  normalColor: theme.textColor
     property string  overheatColor: '#f00'
     property int     overheatLevel: 80
-    property int     units: 0
-    property string  unitsSign: 'C'
-    property string  sensor: ''
-    property string  fontFamily: ''
-    property int     fontSize: 1
-    property string  label: '0°' + unitsSign
+    property string  fontFamily: theme.defaultFont.family
+    property bool    fontBold: false
+    property bool    fontItalic: false
+    property int     fontSize: theme.defaultFont.mSize.height
+    property string  label: 'N/A'
     property string  labelColor: normalColor
     
     Text {
+        id: textLabel
         text: label
         color: labelColor
-        anchors.centerIn: parent
-        property int     minimumWidth: 48
-        property int     minimumHeight: 48
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignTop
         font {
             family: fontFamily
-            pointSize: fontSize
-        }    
+            pixelSize: fontSize
+            bold: fontBold
+            italic: fontItalic
+        }
+        wrapMode: Text.NoWrap
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        anchors {
+            centerIn: parent
+            leftMargin: 10
+            rightMargin: 10
+            left: parent.left
+            right: parent.right
+        }
     }
     
     Component.onCompleted: {
         plasmoid.addEventListener('ConfigChanged', function () {
-            var font = plasmoid.readConfig('font')
-            
-            print ('font: ' + font)
-            
-            fontFamily = font.toString().split(',')[0]
-            print('font family: ' + fontFamily)
-            
-            fontSize = font.toString().split(',')[1]
-            print('font size: ' + fontSize)
-            
+            fontFamily = plasmoid.readConfig('font')
+            fontSize = plasmoid.readConfig('fontSize')
+            fontBold = plasmoid.readConfig('fontBold')
+            fontItalic = plasmoid.readConfig('fontItalic')
             interval = plasmoid.readConfig('interval')
-            print('interval: ' + interval)
-            
             normalColor = plasmoid.readConfig('normalColor')
-            print('normal color: ' + normalColor)
-            
             overheatColor = plasmoid.readConfig('overheatColor')
-            print('overheat color: ' + overheatColor)
-            
             overheatLevel = plasmoid.readConfig('overheatLevel')
-            print('overheat level: ' + overheatLevel)
             
-            units = plasmoid.readConfig('units')
-            print('units: ' + units)
-            
-            sensor = plasmoid.readConfig('sensor')
-            print('sensor: ' + sensor)
-            
-            console.log(units)
-            
-            unitsSign = 'C'
-            if (units == 1) {
-                unitsSign = 'F'
-            }
-            print('units sign: ' + unitsSign)
+            console.log(fontBold, fontItalic)
         })
     }
     
     PlasmaCore.DataSource {
         id: temperatureDataSource
         engine: "systemmonitor"
-        interval: 1000
+        interval: main.interval
+        connectedSources: ['lmsensors/coretemp-isa-0000/Core_0']
 
-        onSourceAdded: {
-            disconnectSource(source)
-            connectSource(source)
-        }
-        
         onNewData: {
-            if (sourceName == 'lmsensors/coretemp-isa-0000/Core_0') {
-                setTemperatureValue(data.value)
-            }
+            setTemperatureValue(data.value)
         }
-    }
-    /*
-    PlasmaCore.DataModel {
-        id: temperatureDataModel
-        dataSource: temperatureDataSource
     }
     
-    PlasmaCore.SortFilterModel {
-        id: sortedEntriesDataModel
-        
-        filterRole: "isDevice"
-        filterRegExp: "false"
-            
-        sourceModel: PlasmaCore.SortFilterModel {
-            sourceModel: temperatureDataModel
-            
-            filterRole: "hidden"
-            filterRegExp: "false"
-            
-            sortRole: "isDevice"
-            sortOrder: "AscendingOrder"
-       }
-    }
-    */
     function setTemperatureValue(value) {
         if (value) {
             var value = Math.ceil(value)
@@ -117,12 +72,31 @@ Item {
             } else {
                 labelColor = normalColor
             }
-    
-            
-            if (units == 1) {
-                value = Math.ceil(value * 9/5.0 + 32)
-            }
-           label = value + '°' + unitsSign
+
+           label = formatValue(value)
+        } else {
+            label = 'N/A'
         }
+    }
+    
+    function formatValue(value) {
+        var units = plasmoid.readConfig('units')
+        var symbol  = 'C'
+        switch (units) {
+            case 0:
+            default:
+                symbol = 'C'
+                break
+            case 1:
+                value = Math.ceil(value * 9/5.0 + 32)
+                symbol = 'F'
+                break
+        }
+        
+        if (plasmoid.formFactor == 3) { // vertical
+            symbol = '';
+        }
+        
+        return value + '°' + symbol
     }
 }

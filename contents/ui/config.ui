@@ -24,83 +24,14 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Sensor Device</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="font_label">
-     <property name="text">
-      <string>Font</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Overheat level</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Interval</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
-    <widget class="QSpinBox" name="kcfg_interval">
-     <property name="suffix">
-      <string>ms</string>
-     </property>
-     <property name="minimum">
-      <number>100</number>
-     </property>
-     <property name="maximum">
-      <number>10000</number>
-     </property>
-     <property name="singleStep">
-      <number>5</number>
-     </property>
-     <property name="value">
-      <number>500</number>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QSpinBox" name="kcfg_overheatLevel">
-     <property name="toolTip">
-      <string>Maximum temperature level before changing to alert color</string>
-     </property>
-     <property name="suffix">
-      <string>°</string>
-     </property>
-     <property name="maximum">
-      <number>200</number>
-     </property>
-     <property name="singleStep">
-      <number>5</number>
-     </property>
-     <property name="value">
-      <number>80</number>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="2">
-    <widget class="QComboBox" name="kcfg_sensor"/>
-   </item>
-   <item row="7" column="0">
+   <item row="10" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Units</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="2">
+   <item row="10" column="1">
     <widget class="QComboBox" name="kcfg_units">
      <item>
       <property name="text">
@@ -114,7 +45,31 @@
      </item>
     </widget>
    </item>
-   <item row="0" column="2">
+   <item row="11" column="1">
+    <widget class="QComboBox" name="kcfg_sensor"/>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Font size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="KColorButton" name="kcfg_overheatColor">
+     <property name="toolTip">
+      <string>Alert color</string>
+     </property>
+     <property name="color">
+      <color>
+       <red>255</red>
+       <green>0</green>
+       <blue>0</blue>
+      </color>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
     <widget class="KColorButton" name="kcfg_normalColor">
      <property name="color">
       <color>
@@ -132,6 +87,75 @@
      </property>
     </widget>
    </item>
+   <item row="6" column="1">
+    <widget class="QFontComboBox" name="kcfg_font"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Overheat level</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="font_label">
+     <property name="text">
+      <string>Font</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Interval</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QSpinBox" name="kcfg_interval">
+     <property name="suffix">
+      <string>ms</string>
+     </property>
+     <property name="minimum">
+      <number>100</number>
+     </property>
+     <property name="maximum">
+      <number>10000</number>
+     </property>
+     <property name="singleStep">
+      <number>100</number>
+     </property>
+     <property name="value">
+      <number>1000</number>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Sensor Device</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QSpinBox" name="kcfg_overheatLevel">
+     <property name="toolTip">
+      <string>Maximum temperature level before changing to alert color</string>
+     </property>
+     <property name="suffix">
+      <string>°</string>
+     </property>
+     <property name="maximum">
+      <number>200</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>80</number>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_8">
      <property name="text">
@@ -139,22 +163,32 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="KColorButton" name="kcfg_overheatColor">
-     <property name="toolTip">
-      <string>Alert color</string>
+   <item row="7" column="1">
+    <widget class="QSpinBox" name="kcfg_fontSize">
+     <property name="suffix">
+      <string/>
      </property>
-     <property name="color">
-      <color>
-       <red>255</red>
-       <green>0</green>
-       <blue>0</blue>
-      </color>
+     <property name="minimum">
+      <number>10</number>
+     </property>
+     <property name="value">
+      <number>20</number>
      </property>
     </widget>
    </item>
-   <item row="6" column="2">
-    <widget class="KFontRequester" name="kcfg_font"/>
+   <item row="8" column="1">
+    <widget class="QCheckBox" name="kcfg_fontBold">
+     <property name="text">
+      <string>Bold</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QCheckBox" name="kcfg_fontItalic">
+     <property name="text">
+      <string>Italic</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -163,11 +197,6 @@
    <class>KColorButton</class>
    <extends>QPushButton</extends>
    <header>kcolorbutton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KFontRequester</class>
-   <extends>QWidget</extends>
-   <header>kfontrequester.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

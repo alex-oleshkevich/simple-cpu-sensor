@@ -16,4 +16,4 @@ X-KDE-PluginInfo-Name=simple-cpu-sensor
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Website=https://github.com/alex-oleshkevich/simple-cpu-sensor
 X-Plasma-API=declarativeappletscript
-X-Plasma-NotificationArea=false
+X-Plasma-NotificationArea=true
