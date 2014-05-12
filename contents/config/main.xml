@@ -7,7 +7,7 @@
     <group name="General">
         <entry name="normalColor" type="Color">
             <label>Normal color</label>
-            <default>#333</default>
+            <default>#808080</default>
         </entry>
         <entry name="overheatColor" type="String">
             <label>Overheat color</label>
@@ -27,11 +27,11 @@
         </entry>
         <entry name="fontSize" type="int">
             <label>TODO</label>
-            <default>20</default>
+            <default>16</default>
         </entry>
         <entry name="fontBold" type="string">
             <label>TODO</label>
-            <default>false</default>
+            <default>true</default>
         </entry>
         <entry name="fontItalic" type="string">
             <label>TODO</label>
@@ -41,9 +41,9 @@
             <label>TODO</label>
             <default>0</default>
         </entry>
-        <entry name="sensor" type="string">
+        <entry name="displayUnitsSign" type="string">
             <label>TODO</label>
-            <default></default>
+            <default>true</default>
         </entry>
     </group>
 </kcfg>

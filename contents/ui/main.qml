@@ -5,16 +5,18 @@ import org.kde.plasma.components 0.1 as Components
 Item {
     id: main
       
-    property int     interval: 1000
-    property string  normalColor: theme.textColor
-    property string  overheatColor: '#f00'
-    property int     overheatLevel: 80
-    property string  fontFamily: theme.defaultFont.family
-    property bool    fontBold: false
-    property bool    fontItalic: false
-    property int     fontSize: theme.defaultFont.mSize.height
+    property int     interval
+    property string  normalColor
+    property string  overheatColor
+    property int     overheatLevel
+    property string  fontFamily
+    property bool    fontBold
+    property bool    fontItalic
+    property int     fontSize
+    property int     usedUnits
+    property bool    displayUnitsSign: true
     property string  label: 'N/A'
-    property string  labelColor: normalColor
+    property string  labelColor: normalColor.toString()
     
     Text {
         id: textLabel
@@ -49,7 +51,10 @@ Item {
             overheatColor = plasmoid.readConfig('overheatColor')
             overheatLevel = plasmoid.readConfig('overheatLevel')
             
-            console.log(fontBold, fontItalic)
+            usedUnits = plasmoid.readConfig('units')
+            displayUnitsSign = plasmoid.readConfig('displayUnitsSign')
+            
+            console.log('new: ' + usedUnits)
         })
     }
     
@@ -80,9 +85,8 @@ Item {
     }
     
     function formatValue(value) {
-        var units = plasmoid.readConfig('units')
         var symbol  = 'C'
-        switch (units) {
+        switch (usedUnits) {
             case 0:
             default:
                 symbol = 'C'
@@ -93,7 +97,7 @@ Item {
                 break
         }
         
-        if (plasmoid.formFactor == 3) { // vertical
+        if (displayUnitsSign == false) {
             symbol = '';
         }
         
