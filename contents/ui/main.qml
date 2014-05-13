@@ -16,7 +16,7 @@ Item {
     property int     usedUnits
     property bool    displayUnitsSign: true
     property string  label: 'N/A'
-    property string  labelColor: normalColor.toString()
+    property string  labelColor: normalColor
     property bool    isSourceRegistered: false
     
     Text {
@@ -52,6 +52,8 @@ Item {
             
             usedUnits = plasmoid.readConfig('units')
             displayUnitsSign = plasmoid.readConfig('displayUnitsSign')
+            
+            tooltip.mainText = 'Confing completed'
         })
     }
     
@@ -59,25 +61,25 @@ Item {
         id: temperatureDataSource
         engine: "systemmonitor"
         interval: main.interval
-        connectedSources: []
-
-        onSourceAdded: {
-            if (isSourceRegistered) {
-                return
-            }
-            
-            if (source.match(/lmsensors\/(k\d+temp|coretemp)/)) {
-                disconnectSource(source)
-                connectSource(source)
-                isSourceRegistered = true
-                
-                console.log('Source registered: ' + source)
-            }
-        }
-        
+        connectedSources: detectSource(sources)
         onNewData: {
             setTemperatureValue(data.value)
         }
+    }
+    
+    function detectSource(sources) {
+        var detected = []
+        for (var i in sources) {
+            var source = sources[i]
+            console.log(source)
+            if (source.match(/lmsensors\/(k\d+temp|coretemp)/)) {
+                isSourceRegistered = true
+                detected.push(source)
+                print('Source registered: ' + source)
+                break
+            }
+        }
+        return detected
     }
     
     function setTemperatureValue(value) {
@@ -91,7 +93,7 @@ Item {
 
            label = formatValue(value)
         } else {
-            label = 'N/A'
+            label = 'ERR'
         }
     }
     
