@@ -37,6 +37,7 @@ Item {
             left: parent.left
             right: parent.right
         }
+        
     }
     
     Component.onCompleted: {
@@ -68,10 +69,13 @@ Item {
     }
     
     function detectSource(sources) {
+        if (isSourceRegistered) {
+            return temperatureDataSource.connectedSources
+        }
+        
         var detected = []
         for (var i in sources) {
             var source = sources[i]
-            console.log(source)
             if (source.match(/lmsensors\/(k\d+temp|coretemp)/)) {
                 isSourceRegistered = true
                 detected.push(source)
