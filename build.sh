@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 if [ -f "simple-cpu-sensor.zip" ]; then
     rm simple-cpu-sensor.zip
 fi;
